@@ -5,12 +5,12 @@ class Book extends Component {
 
     static propTypes = {
         title: PropTypes.string.isRequired,
-        author: PropTypes.string.isRequired,
+        authors: PropTypes.array,
         coverUrl: PropTypes.string.isRequired
     }
 
     render() {
-        const {title, author, coverUrl } = this.props;
+        const {title, authors, coverUrl } = this.props;
         return (
             <div className="book">
                 <div className="book-top">
@@ -26,7 +26,9 @@ class Book extends Component {
                     </div>
                 </div>
                 <div className="book-title">{title}</div>
-                <div className="book-authors">{author}</div>
+                {authors.map((author) => {
+                    return <div key={author} className="book-authors">{author}</div>
+                })}
             </div>
         )
     }

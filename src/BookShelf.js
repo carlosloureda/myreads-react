@@ -14,8 +14,8 @@ class BookShelf extends Component {
                             <li key={book.id}>
                                 <Book
                                     title={book.title}
-                                    author={book.author}
-                                    coverUrl={book.coverUrl}
+                                    authors={book.authors}
+                                    coverUrl={book.imageLinks.smallThumbnail}
                                 />
 
                             </li>
