@@ -4,29 +4,29 @@ import PropTypes from 'prop-types'
 class Book extends Component {
 
     static propTypes = {
-        title: PropTypes.string.isRequired,
-        authors: PropTypes.array,
-        coverUrl: PropTypes.string.isRequired
+        book: PropTypes.any.isRequired
     }
 
     render() {
-        const {title, authors, coverUrl } = this.props;
+        const book = this.props.book;
+        const coverUrl = this.props.book.imageLinks.smallThumbnail;
+
         return (
             <div className="book">
                 <div className="book-top">
                     <div className="book-cover" style={{ width: 128, height: 192, backgroundImage: `url("${coverUrl}"` }}></div>
                     <div className="book-shelf-changer">
-                        <select>
+                        <select onChange={(event) => this.props.onChangeShelf(event, book)} >
                             <option value="none" disabled>Move to...</option>
-                            <option value="currentlyReading">Currently Reading</option>
-                            <option value="wantToRead">Want to Read</option>
-                            <option value="read">Read</option>
-                            <option value="none">None</option>
+                            <option name="currentlyReading" value="currentlyReading">Currently Reading</option>
+                            <option name="wantToRead" value="wantToRead">Want to Read</option>
+                            <option name="read" value="read">Read</option>
+                            <option name="none" value="none">None</option>
                         </select>
                     </div>
                 </div>
-                <div className="book-title">{title}</div>
-                {authors.map((author) => {
+                <div className="book-title">{book.title}</div>
+                {book.authors.map((author) => {
                     return <div key={author} className="book-authors">{author}</div>
                 })}
             </div>

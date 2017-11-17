@@ -13,54 +13,51 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     showSearchPage: false,
-    books: [],
-    booksReading: [],
-    booksRead: [],
-    booksWantRead: []
+    books: []
   }
 
-  componentDidMount(){
+  componentDidMount = () => {
     //TODO: Show loadings?
-    let booksReading = [];
-    let booksRead = [];
-    let booksWantRead = [];
-
     BooksAPI.getAll()
     .then((result)=>{
-      this.books=result;
-      result.forEach((book) => {
-        switch(book.shelf) {
-          case 'currentlyReading':
-            booksReading.push(book);
-            break;
-          case 'read':
-            booksRead.push(book);
-            break;
-          case 'wantToRead':
-            booksWantRead.push(book);
-            break;
-          default:
-            break;
-        }
-      });
       this.setState((state) => ({
-        booksReading: booksReading
+        books: result
       }));
-      this.setState((state) => ({
-        booksRead: booksRead
-      }));
-      this.setState((state) => ({
-        booksWantRead: booksWantRead
-      }));
-
     }).catch((err)=>{
       //TODO: Would be nice adding nice errors showing on the page
       console.error("error is: ", err);
     })
   }
 
-  render() {
+  onChangeShelf = (event, book) => {
+    let newShelf = event.target.value;
+    if (newShelf !== book.shelf) {
+      console.log(`Book should me moved from ${book.shelf} to ${event.target.value}`);
+      BooksAPI.update(book, newShelf).then((shelf) => {
+        this.setState(state => ({
 
+          books: state.books.map((_book) => {
+            if (book.id === _book.id) {
+              _book.shelf = newShelf;
+            }
+            return _book;
+          })
+        }));
+      });
+    }
+  }
+
+  getBooksByShelf = (shelf) => {
+    let booksInShelf = [];
+    this.state.books.forEach(book => {
+      if (book.shelf === shelf) {
+        booksInShelf.push(book);
+      }
+    });
+    return booksInShelf;
+  }
+
+  render() {
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -91,9 +88,21 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf title="Currently Reading" books={this.state.booksReading}/>
-                <BookShelf title="Want to read" books={this.state.booksWantRead}/>
-                <BookShelf title="Read" books={this.state.booksRead}/>
+                <BookShelf
+                  title="Currently Reading"
+                  books={this.getBooksByShelf('currentlyReading')}
+                  onChangeShelf={this.onChangeShelf}
+                />
+                <BookShelf
+                  title="Want to read"
+                  books={this.getBooksByShelf('wantToRead')}
+                  onChangeShelf={this.onChangeShelf}
+                />
+                <BookShelf
+                  title="Read"
+                  books={this.getBooksByShelf('read')}
+                  onChangeShelf={this.onChangeShelf}
+                />
               </div>
             </div>
             <div className="open-search">
