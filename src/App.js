@@ -3,23 +3,46 @@ import { Route, Link } from 'react-router-dom';
 
 import * as BooksAPI from './BooksAPI'
 import BookShelf from './BookShelf';
+import Book from './Book';
 
 import './App.css';
 
 class BooksApp extends React.Component {
   state = {
+    // My collection of books
     books: [],
+    /**
+     * My shelf status, an object containing the ids of the books in each shelf     *
+     * This object is mounted manually on FindAll but is auto-merged on afterUpdate
+     * as it is the return value of API
+     */
+    shelf: {currentlyReading: [], wantToRead: [], read: []},
+    // The result of the search from all the books in API
     searchedBooks: []
   }
 
+  initShelfData = () => {
+      // Mount my self object
+      let shelf = {currentlyReading: [], wantToRead: [], read: []};
+      if ( this.state.books && this.state.books.length) {
+        this.state.books.forEach(book => {
+          shelf[book.shelf].push(book.id);
+        });
+      }
+      this.setState((state) => ({
+        shelf: shelf
+      }));
+  }
   componentDidMount = () => {
     //TODO: Show loadings?
+
+    // Get all MY books
     BooksAPI.getAll()
     .then((result)=>{
-      console.log("The books getAll: ", result);
       this.setState((state) => ({
         books: result
       }));
+      this.initShelfData();
     }).catch((err)=>{
       //TODO: Would be nice adding nice errors showing on the page
       console.error("error is: ", err);
@@ -31,16 +54,11 @@ class BooksApp extends React.Component {
     if (newShelf !== book.shelf) {
       console.log(`Book should me moved from ${book.shelf} to ${event.target.value}`);
       BooksAPI.update(book, newShelf).then((shelf) => {
-        // console.log("The self is now: ", shelf);
-        // console.log("On setState change for books");
          this.setState(state => ({
 
           books: state.books.map((_book) => {
             if (book.id === _book.id) {
-              console.warn("BOOK REALLY MOVED")
               _book.shelf = newShelf;
-            } else {
-              // it is a new book so we add it
             }
             return _book;
           })
@@ -50,7 +68,6 @@ class BooksApp extends React.Component {
   }
 
   getBooksByShelf = (shelf) => {
-    console.log("Calling getBooksByShelf");
     let booksInShelf = [];
 
     this.state.books.forEach(book => {
@@ -63,10 +80,10 @@ class BooksApp extends React.Component {
 
   searchBooks = (query) => {
     if (!query) {
+      this.setState((state) => ({ searchedBooks: [] }));
       return;
     }
     BooksAPI.search(query, null).then((data) => {
-      console.log("The books search: ", data);
       this.setState((state) => ({
         searchedBooks: ( ! data || data.error ) ? [] : data,
       }));
@@ -108,27 +125,34 @@ class BooksApp extends React.Component {
           </div>
         )} />
 
-        <Route path="/search" render={() => (
+        <Route path="/search" render={(history) => (
           <div className="search-books">
             <div className="search-books-bar">
-              <Link className="close-search" to="/">Close</Link>
+              <Link
+                className="close-search"
+                to="/"
+                onClick={()=>  history.push('/') }
+              >Close</Link>
               <div className="search-books-input-wrapper">
                 <input
                   type="text" placeholder="Search by title or author"
                   onChange={(event) => this.searchBooks(event.target.value)}
                 />
-
-                {this.state.searchedBooks.length > 0 &&
-                  <BookShelf
-                    title="Resultados"
-                    books={this.state.searchedBooks}
-                    onChangeShelf={this.onChangeShelf}
-                  />}
-
               </div>
             </div>
             <div className="search-books-results">
-              <ol className="books-grid"></ol>
+              <ol className="books-grid">
+                {this.state.searchedBooks.length > 0
+                  && this.state.searchedBooks.map(book => (
+                  <li key={book.id}>
+                    <Book
+                        book={book}
+                        onChangeShelf={this.onChangeShelf}
+                        shelf={this.state.shelf}
+                    />
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
         )} />
