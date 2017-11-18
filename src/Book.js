@@ -31,6 +31,7 @@ class Book extends Component {
             <div className="book">
                 <div className="book-top">
                     <div className="book-cover" style={{width: 128, height: 192, backgroundImage: `url("${coverUrl}"` }}></div>
+
                     <div className="book-shelf-changer">
                         <select onChange={(event) => this.props.onChangeShelf(event, book)} defaultValue={defaultShelf}>
                             <option value="none" disabled>Move to...</option>
@@ -41,7 +42,9 @@ class Book extends Component {
                         </select>
                     </div>
                 </div>
+
                 <div className="book-title">{book.title}</div>
+
                 {book.authors && book.authors.map((author) => {
                     return <div key={author} className="book-authors">{author}</div>
                 })}

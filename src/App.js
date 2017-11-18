@@ -110,6 +110,7 @@ class BooksApp extends React.Component {
             <div className="list-books-title">
               <h1>MyReads</h1>
             </div>
+
             <div className="list-books-content">
               <div>
                 <BookShelf
@@ -129,6 +130,7 @@ class BooksApp extends React.Component {
                 />
               </div>
             </div>
+
             <div className="open-search">
               <Link to="/search">Add a book</Link>
             </div>
@@ -143,6 +145,7 @@ class BooksApp extends React.Component {
                 to="/"
                 onClick={()=>  history.push('/') }
               >Close</Link>
+
               <div className="search-books-input-wrapper">
                 <input
                   type="text" placeholder="Search by title or author"
@@ -150,6 +153,7 @@ class BooksApp extends React.Component {
                 />
               </div>
             </div>
+
             <div className="search-books-results">
               <ol className="books-grid">
                 {this.state.searchedBooks.length > 0
