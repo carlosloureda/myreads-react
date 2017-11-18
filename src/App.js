@@ -34,8 +34,6 @@ class BooksApp extends React.Component {
       }));
   }
   componentDidMount = () => {
-    //TODO: Show loadings?
-
     // Get all MY books
     BooksAPI.getAll()
     .then((result)=>{
@@ -51,17 +49,29 @@ class BooksApp extends React.Component {
 
   onChangeShelf = (event, book) => {
     let newShelf = event.target.value;
+    // if book not in shelf we have to add it ..
     if (newShelf !== book.shelf) {
       console.log(`Book should me moved from ${book.shelf} to ${event.target.value}`);
       BooksAPI.update(book, newShelf).then((shelf) => {
-         this.setState(state => ({
 
-          books: state.books.map((_book) => {
+        //TODO: Maybe add and update is easier calling getAll but wanted to
+        // avoid extra server calls and manage this manually, would love to know
+        // the best answe for this
+        let _books = this.state.books;
+        let booksIds = this.state.books.map(book => book.id);
+        if (booksIds.indexOf(book.id) === -1) {
+          _books.push(book);
+        } else {
+          _books = this.state.books.map((_book) => {
             if (book.id === _book.id) {
               _book.shelf = newShelf;
             }
             return _book;
-          })
+          });
+        }
+        this.setState(state => ({
+          shelf: shelf,
+          books: _books
         }));
       });
     }
