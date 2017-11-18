@@ -13,7 +13,8 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     showSearchPage: false,
-    books: []
+    books: [],
+    searchedBooks: []
   }
 
   componentDidMount = () => {
@@ -34,11 +35,16 @@ class BooksApp extends React.Component {
     if (newShelf !== book.shelf) {
       console.log(`Book should me moved from ${book.shelf} to ${event.target.value}`);
       BooksAPI.update(book, newShelf).then((shelf) => {
-        this.setState(state => ({
+        // console.log("The self is now: ", shelf);
+        // console.log("On setState change for books");
+         this.setState(state => ({
 
           books: state.books.map((_book) => {
             if (book.id === _book.id) {
+              console.warn("BOOK REALLY MOVED")
               _book.shelf = newShelf;
+            } else {
+              // it is a new book so we add it
             }
             return _book;
           })
@@ -48,7 +54,9 @@ class BooksApp extends React.Component {
   }
 
   getBooksByShelf = (shelf) => {
+    console.log("Calling getBooksByShelf");
     let booksInShelf = [];
+
     this.state.books.forEach(book => {
       if (book.shelf === shelf) {
         booksInShelf.push(book);
@@ -57,7 +65,21 @@ class BooksApp extends React.Component {
     return booksInShelf;
   }
 
+  searchBooks = (query) => {
+    if (!query) {
+      return;
+    }
+    BooksAPI.search(query, null).then((data) => {
+      this.setState((state) => ({
+        searchedBooks: ( ! data || data.error ) ? [] : data,
+      }));
+    }).catch((err)=> {
+      console.error("error: ", err);
+    });
+  }
+
   render() {
+    console.warn("On render, this.state.showSearchPage: ", this.state.showSearchPage);
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -65,15 +87,17 @@ class BooksApp extends React.Component {
             <div className="search-books-bar">
               <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
               <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
+                <input
+                  type="text" placeholder="Search by title or author"
+                  onChange={(event) => this.searchBooks(event.target.value)}
+                />
 
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author"/>
+                {this.state.searchedBooks.length > 0 &&
+                  <BookShelf
+                    title="Resultados"
+                    books={this.state.searchedBooks}
+                    onChangeShelf={this.onChangeShelf}
+                  />}
 
               </div>
             </div>
