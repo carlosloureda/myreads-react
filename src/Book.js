@@ -27,13 +27,16 @@ class Book extends Component {
         let defaultShelf = this.props.book.shelf;
         if ( ! defaultShelf ) {
             // TODO: Avoid for-in loop
-            for (let shelfElement in this.props.shelf) {
-                this.props.shelf[shelfElement].length &&
-                this.props.shelf[shelfElement].forEach(bookId => {
-                    if (bookId === this.props.book.id) {
-                        defaultShelf = shelfElement;
-                    }
-                });
+            for (let key in this.props.shelf) {
+                if (this.props.shelf.hasOwnProperty(key)) {
+                    // TODO: Avoid closures
+                    this.props.shelf[key].length &&
+                    this.props.shelf[key].forEach(bookId => {
+                        if (bookId === this.props.book.id) {
+                            defaultShelf = key;
+                        }
+                    });
+                }
             };
         }
         return defaultShelf ? defaultShelf : 'none'

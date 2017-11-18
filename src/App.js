@@ -21,7 +21,11 @@ class BooksApp extends React.Component {
      * My shelf status, an object containing the ids of the books in each shelf
      * separated by shelfName.
      */
-    shelf: {currentlyReading: [], wantToRead: [], read: []},
+    shelf: {
+      currentlyReading: [],
+      wantToRead: [],
+      read: []
+    },
     /**
      * The result of the search from all the books in API
      */
@@ -36,7 +40,7 @@ class BooksApp extends React.Component {
   */
   initShelfData = () => {
       // Mount my self object
-      let shelf = {currentlyReading: [], wantToRead: [], read: []};
+      let shelf = this.state.shelf;
       if ( this.state.books && this.state.books.length) {
         this.state.books.forEach(book => {
           shelf[book.shelf].push(book.id);
