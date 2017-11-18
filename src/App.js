@@ -7,20 +7,33 @@ import Book from './Book';
 
 import './App.css';
 
+/**
+ * Main component for my myreads application
+ */
+
 class BooksApp extends React.Component {
   state = {
-    // My collection of books
+    /**
+     * My collection of books
+     */
     books: [],
     /**
-     * My shelf status, an object containing the ids of the books in each shelf     *
-     * This object is mounted manually on FindAll but is auto-merged on afterUpdate
-     * as it is the return value of API
+     * My shelf status, an object containing the ids of the books in each shelf
+     * separated by shelfName.
      */
     shelf: {currentlyReading: [], wantToRead: [], read: []},
-    // The result of the search from all the books in API
+    /**
+     * The result of the search from all the books in API
+     */
     searchedBooks: []
   }
 
+  /**
+  * @description As I store the books in the books array, and some API calls
+  *   (update) returns the shelf object to know wherea are them stored
+  *   so I want to have it set manually on component start.
+  *   The sheld data is stored in the component state
+  */
   initShelfData = () => {
       // Mount my self object
       let shelf = {currentlyReading: [], wantToRead: [], read: []};
@@ -33,6 +46,7 @@ class BooksApp extends React.Component {
         shelf: shelf
       }));
   }
+
   componentDidMount = () => {
     // Get all MY books
     BooksAPI.getAll()
@@ -47,18 +61,21 @@ class BooksApp extends React.Component {
     })
   }
 
+  /**
+  * @description Manages event for adding a book to a shelf or updating
+  *   the shelf where a book is placed
+  * @param {object} event - The event that triggered the change (option clicked on select)
+  * @param {object} book - The book added to the shelf or updated
+  */
   onChangeShelf = (event, book) => {
-    let newShelf = event.target.value;
+    const newShelf = event.target.value;
     // if book not in shelf we have to add it ..
     if (newShelf !== book.shelf) {
       console.log(`Book should me moved from ${book.shelf} to ${event.target.value}`);
       BooksAPI.update(book, newShelf).then((shelf) => {
-
-        //TODO: Maybe add and update is easier calling getAll but wanted to
-        // avoid extra server calls and manage this manually, would love to know
-        // the best answe for this
+        //TODO: Maybe add and update are easier calling getAll to re-fill array of books
+        const booksIds = this.state.books.map(book => book.id);
         let _books = this.state.books;
-        let booksIds = this.state.books.map(book => book.id);
         if (booksIds.indexOf(book.id) === -1) {
           _books.push(book);
         } else {
@@ -77,6 +94,12 @@ class BooksApp extends React.Component {
     }
   }
 
+  /**
+  * @description Retreives the books in a shelf given
+  * @param {name} shelf - The name of the shelf from which we want to retrieve
+  *   the books from
+  * @returns {object[]} booksInShelf - An array containing the books in the shelf
+  */
   getBooksByShelf = (shelf) => {
     let booksInShelf = [];
 
@@ -88,6 +111,11 @@ class BooksApp extends React.Component {
     return booksInShelf;
   }
 
+  /**
+  * @description Retreives the books in a shelf given. This books are stored in
+      component state (searchedBooks)
+  * @param {name} query - The query string to search for in the API (author or book names)  *
+  */
   searchBooks = (query) => {
     if (!query) {
       this.setState((state) => ({ searchedBooks: [] }));
@@ -170,7 +198,6 @@ class BooksApp extends React.Component {
             </div>
           </div>
         )} />
-
       </div>
     )
   }

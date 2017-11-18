@@ -1,16 +1,32 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 
+/**
+ * Book Component, shows the author, cover iamge and name of the book.
+ * Also allows to move the shelf where this book is stored.
+ */
 class Book extends Component {
 
     static propTypes = {
+        /* The book object */
         book: PropTypes.any.isRequired,
+        /* An object containing our shelf structure. */
         shelf: PropTypes.any
     }
 
+    /**
+    * @description Calculates the shelf where this book is stored.
+    *   Needed because this view is used for both books in shelf and books in
+    *   search results view. The first ones have an attribute that points to its
+    *   shelf but the books on API search results must be compared agains our
+    *   shelf state.
+    * @returns {string} The shelf name where it is stored: currentlyReading, wantToRead, read
+    *                   If not in a shelf, the 'none' name is returned.
+    */
     getDefaultShelf = () => {
         let defaultShelf = this.props.book.shelf;
         if ( ! defaultShelf ) {
+            // TODO: Avoid for-in loop
             for (let shelfElement in this.props.shelf) {
                 this.props.shelf[shelfElement].length &&
                 this.props.shelf[shelfElement].forEach(bookId => {
@@ -26,7 +42,7 @@ class Book extends Component {
     render() {
         const book = this.props.book;
         const coverUrl = this.props.book.imageLinks.smallThumbnail;
-        let defaultShelf = this.getDefaultShelf();
+        const defaultShelf = this.getDefaultShelf();
         return (
             <div className="book">
                 <div className="book-top">

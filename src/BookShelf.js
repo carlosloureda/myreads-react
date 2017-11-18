@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Book from './Book';
 
+/**
+ * BookShelf Component,Shows a list of books stored in this shelf
+ */
 class BookShelf extends Component {
 
     render() {
@@ -17,9 +20,7 @@ class BookShelf extends Component {
                                     book={book}
                                     onChangeShelf={this.props.onChangeShelf}
                                 />
-
                             </li>
-
                         ))}
                     </ol>
                 </div>
