@@ -25,20 +25,23 @@ class Book extends Component {
     */
     getDefaultShelf = () => {
         let defaultShelf = this.props.book.shelf;
-        if ( ! defaultShelf ) {
-            // TODO: Avoid for-in loop
-            for (let key in this.props.shelf) {
-                if (this.props.shelf.hasOwnProperty(key)) {
-                    // TODO: Avoid closures
-                    this.props.shelf[key].length &&
-                    this.props.shelf[key].forEach(bookId => {
-                        if (bookId === this.props.book.id) {
-                            defaultShelf = key;
-                        }
-                    });
-                }
-            };
-        }
+        // if ( ! defaultShelf ) {
+        //     // TODO: Avoid for-in loop
+                
+        //     console.log("this.props.self: ", this.props.self);
+        //     for (let key in this.props.shelf) {
+        //         if (this.props.shelf.hasOwnProperty(key)) {
+        //             // TODO: Avoid closures
+        //             // eslint-disable-next-line 
+        //             this.props.shelf[key].length &&
+        //             this.props.shelf[key].forEach(bookId => {
+        //                 if (bookId === this.props.book.id) {
+        //                     defaultShelf = key;
+        //                 }
+        //             });
+        //         }
+        //     };
+        // }
         return defaultShelf ? defaultShelf : 'none'
     }
 
@@ -49,7 +52,7 @@ class Book extends Component {
         return (
             <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{width: 128, height: 192, backgroundImage: `url("${coverUrl}"` }}></div>
+                    <div className="book-cover" style={{width: 128,height: 192, backgroundImage: `url("${coverUrl}"` }}></div>
 
                     <div className="book-shelf-changer">
                         <select onChange={(event) => this.props.onChangeShelf(event, book)} defaultValue={defaultShelf}>
@@ -62,11 +65,10 @@ class Book extends Component {
                     </div>
                 </div>
 
-                <div className="book-title">{book.title}</div>
-
-                {book.authors && book.authors.map((author) => {
-                    return <div key={author} className="book-authors">{author}</div>
-                })}
+                <div className="book-title">{book.title}</div>                
+                <div className="book-authors">
+                    {book.authors ? book.authors.join(', '): ''}
+                </div>
             </div>
         )
     }

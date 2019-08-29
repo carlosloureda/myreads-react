@@ -38,17 +38,14 @@ class BooksApp extends React.Component {
   *   so I want to have it set manually on component start.
   *   The sheld data is stored in the component state
   */
-  initShelfData = () => {
+  initShelfData = (shelf) => {
       // Mount my self object
-      let shelf = this.state.shelf;
       if ( this.state.books && this.state.books.length) {
         this.state.books.forEach(book => {
           shelf[book.shelf].push(book.id);
         });
       }
-      this.setState((state) => ({
-        shelf: shelf
-      }));
+      this.setState((state) => ({shelf}));
   }
 
   componentDidMount = () => {
@@ -58,7 +55,7 @@ class BooksApp extends React.Component {
       this.setState((state) => ({
         books: result
       }));
-      this.initShelfData();
+      this.initShelfData(this.state.shelf);
     }).catch((err)=>{
       //TODO: Would be nice adding nice errors showing on the page
       console.error("error is: ", err);
