@@ -1,5 +1,6 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Router, Switch, Route, Link } from 'react-router-dom';
+import {createBrowserHistory} from 'history'
 
 import * as BooksAPI from './BooksAPI'
 import BookShelf from './BookShelf';
@@ -132,73 +133,78 @@ class BooksApp extends React.Component {
   }
 
   render() {
+    const newHistory = createBrowserHistory();
     return (
       <div className="app">
-        <Route exact path="/" render={() => (
-          <div className="list-books">
-            <div className="list-books-title">
-              <h1>MyReads</h1>
-            </div>
+        <Router history={newHistory}>
+          <Switch>
+            <Route exact path="/" render={() => (
+              <div className="list-books">
+                <div className="list-books-title">
+                  <h1>MyReads</h1>
+                </div>
 
-            <div className="list-books-content">
-              <div>
-                <BookShelf
-                  title="Currently Reading"
-                  books={this.getBooksByShelf('currentlyReading')}
-                  onChangeShelf={this.onChangeShelf}
-                />
-                <BookShelf
-                  title="Want to read"
-                  books={this.getBooksByShelf('wantToRead')}
-                  onChangeShelf={this.onChangeShelf}
-                />
-                <BookShelf
-                  title="Read"
-                  books={this.getBooksByShelf('read')}
-                  onChangeShelf={this.onChangeShelf}
-                />
-              </div>
-            </div>
-
-            <div className="open-search">
-              <Link to="/search">Add a book</Link>
-            </div>
-          </div>
-        )} />
-
-        <Route path="/search" render={(history) => (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <Link
-                className="close-search"
-                to="/"
-                onClick={()=>  history.push('/') }
-              >Close</Link>
-
-              <div className="search-books-input-wrapper">
-                <input
-                  type="text" placeholder="Search by title or author"
-                  onChange={(event) => this.searchBooks(event.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="search-books-results">
-              <ol className="books-grid">
-                {this.state.searchedBooks.length > 0
-                  && this.state.searchedBooks.map(book => (
-                  <li key={book.id}>
-                    <Book
-                        book={book}
-                        onChangeShelf={this.onChangeShelf}
-                        shelf={this.state.shelf}
+                <div className="list-books-content">
+                  <div>
+                    <BookShelf
+                      title="Currently Reading"
+                      books={this.getBooksByShelf('currentlyReading')}
+                      onChangeShelf={this.onChangeShelf}
                     />
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        )} />
+                    <BookShelf
+                      title="Want to read"
+                      books={this.getBooksByShelf('wantToRead')}
+                      onChangeShelf={this.onChangeShelf}
+                    />
+                    <BookShelf
+                      title="Read"
+                      books={this.getBooksByShelf('read')}
+                      onChangeShelf={this.onChangeShelf}
+                    />
+                  </div>
+                </div>
+
+                <div className="open-search">
+                  <Link to="/search">Add a book</Link>
+                </div>
+              </div>
+            )} />
+
+             <Route path="/search" render={(history) => (
+              <div className="search-books">
+                <div className="search-books-bar">
+                  <Link
+                    className="close-search"
+                    to="/"
+                    onClick={()=>  history.push('/') }
+                  >Close</Link>
+
+                  <div className="search-books-input-wrapper">
+                    <input
+                      type="text" placeholder="Search by title or author"
+                      onChange={(event) => this.searchBooks(event.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="search-books-results">
+                  <ol className="books-grid">
+                    {this.state.searchedBooks.length > 0
+                      && this.state.searchedBooks.map(book => (
+                      <li key={book.id}>
+                        <Book
+                            book={book}
+                            onChangeShelf={this.onChangeShelf}
+                            shelf={this.state.shelf}
+                        />
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            )} /> 
+          </Switch>
+        </Router>
       </div>
     )
   }
