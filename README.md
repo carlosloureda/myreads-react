@@ -1,5 +1,7 @@
 # MyReads Project (ReactJS Nanodegree)
 
+**NOTE**: This is the project I did when I was a student, now I have an updated version (WIP) as a mentor to show students some improvements or some crazy ideas that can be achieved with this project. If you want to check out the new project please go to this [repository](https://github.com/carlosloureda/my-reads-udacity-project).
+
 This is the code the final assessment project for Udacity's React Fundamentals course. It is based on a get started template given at this github: https://github.com/udacity/reactnd-project-myreads-starter
 
 
